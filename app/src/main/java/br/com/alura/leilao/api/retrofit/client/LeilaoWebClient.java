@@ -1,5 +1,6 @@
 package br.com.alura.leilao.api.retrofit.client;
 
+import java.io.IOException;
 import java.util.List;
 
 import br.com.alura.leilao.api.retrofit.RetrofitInicializador;
@@ -52,8 +53,16 @@ public class LeilaoWebClient {
         });
     }
 
-    private boolean temDados(Response<List<Leilao>> response) {
+    private <T> boolean temDados(Response<T> response) {
         return response.isSuccessful() && response.body() != null;
     }
 
+    public Leilao salva(Leilao leilao) throws IOException {
+        final Call<Leilao> call = service.salva(leilao);
+        final Response<Leilao> response = call.execute();
+        if (temDados(response)){
+            return response.body();
+        }
+        return null;
+    }
 }
