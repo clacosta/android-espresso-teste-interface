@@ -1,9 +1,7 @@
 package br.com.alura.leilao.api.retrofit.client;
 
-import java.io.IOException;
 import java.util.List;
 
-import br.com.alura.leilao.api.retrofit.RetrofitInicializador;
 import br.com.alura.leilao.api.retrofit.service.LeilaoService;
 import br.com.alura.leilao.model.Lance;
 import br.com.alura.leilao.model.Leilao;
@@ -11,11 +9,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LeilaoWebClient {
+public class LeilaoWebClient extends WebClient {
     private final LeilaoService service;
 
     public LeilaoWebClient() {
-        service = new RetrofitInicializador().getLeilaoService();
+        this.service = new RetrofitInicializador().getLeilaoService();
     }
 
     public void propoe(Lance lance, Long id, final RespostaListener<Void> listener) {
@@ -50,24 +48,5 @@ public class LeilaoWebClient {
                 listener.falha(t.getMessage());
             }
         });
-    }
-
-    private <T> boolean temDados(Response<T> response) {
-        return response.isSuccessful() && response.body() != null;
-    }
-
-    public Leilao salva(Leilao leilao) throws IOException {
-        final Call<Leilao> call = service.salva(leilao);
-        final Response<Leilao> response = call.execute();
-        if (temDados(response)) {
-            return response.body();
-        }
-        return null;
-    }
-
-    public Boolean limpaBancoDeDados() throws IOException {
-        final Call<Void> call = service.limpaBancoDeDados();
-        final Response<Void> response = call.execute();
-        return response.isSuccessful();
     }
 }

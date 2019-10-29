@@ -16,7 +16,6 @@ import br.com.alura.leilao.formatter.FormatadorDeMoeda;
 import br.com.alura.leilao.model.Leilao;
 
 public class ListaLeilaoAdapter extends RecyclerView.Adapter<ListaLeilaoAdapter.ViewHolder> {
-
     private final List<Leilao> leiloes;
     private final Context context;
     private final FormatadorDeMoeda formatadorDeMoeda;
@@ -94,5 +93,4 @@ public class ListaLeilaoAdapter extends RecyclerView.Adapter<ListaLeilaoAdapter.
     public interface OnItemClickListener {
         void onItemClick(Leilao leilao);
     }
-
 }
