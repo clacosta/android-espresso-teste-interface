@@ -18,48 +18,48 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.fail;
 
 public class ListaLeilaoTelaTest {
+    final TesteWebClient webClient = new TesteWebClient();
     @Rule
     public ActivityTestRule<ListaLeilaoActivity> activityTestRule =
             new ActivityTestRule<>(ListaLeilaoActivity.class, true, false);
 
     @Test
     public void deve_AparecerUmLeilao_QuandoCarregarUmLeilaoNaApi() throws IOException {
-        final TesteWebClient webClient = new TesteWebClient();
+        limpaBaseDeDadosDaApi();
 
-        final Boolean bancoDeDadosNaoFoiLimpo = !webClient.limpaBancoDeDados();
-        if (bancoDeDadosNaoFoiLimpo) {
-            fail("Banco de dados não foi limpo");
-        }
-
-        final Leilao carroLeilao = webClient.salva(new Leilao("Carro"));
-        if (carroLeilao == null) {
-            fail("Leilão não foi salvo");
-        }
+        tentaSalvarLeilaoNaApi(new Leilao("Carro"));
 
         activityTestRule.launchActivity(new Intent());
 
         onView(withText("Carro")).check(matches(isDisplayed()));
     }
 
-
     @Test
     public void deve_AparecerDoisLeiloes_QuandoCarregarDoisLeiloesDaApi() throws IOException {
-        final TesteWebClient webClient = new TesteWebClient();
+        limpaBaseDeDadosDaApi();
 
-        final Boolean bancoDeDadosNaoFoiLimpo = !webClient.limpaBancoDeDados();
-        if (bancoDeDadosNaoFoiLimpo) {
-            fail("Banco de dados não foi limpo");
-        }
-
-        final Leilao carroLeilao = webClient.salva(new Leilao("Carro"));
-        final Leilao computadorLeilao = webClient.salva(new Leilao("Computador"));
-        if (carroLeilao == null || computadorLeilao == null) {
-            fail("Leilão não foi salvo");
-        }
+        tentaSalvarLeilaoNaApi(new Leilao("Carro"), new Leilao("Computador"));
 
         activityTestRule.launchActivity(new Intent());
 
         onView(withText("Carro")).check(matches(isDisplayed()));
         onView(withText("Computador")).check(matches(isDisplayed()));
+    }
+
+    private void limpaBaseDeDadosDaApi() throws IOException {
+        final Boolean bancoDeDadosNaoFoiLimpo = !webClient.limpaBancoDeDados();
+        if (bancoDeDadosNaoFoiLimpo) {
+            fail("Banco de dados não foi limpo");
+        }
+    }
+
+    private void tentaSalvarLeilaoNaApi(Leilao... leiloes) throws IOException {
+        for (Leilao leilao : leiloes
+        ) {
+            final Leilao leilaoSalvo = webClient.salva(leilao);
+            if (leilaoSalvo == null) {
+                fail("Leilão não foi salvo: " + leilao.getDescricao());
+            }
+        }
     }
 }
