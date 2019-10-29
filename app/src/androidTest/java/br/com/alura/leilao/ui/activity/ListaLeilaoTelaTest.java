@@ -37,8 +37,29 @@ public class ListaLeilaoTelaTest {
         }
 
         activityTestRule.launchActivity(new Intent());
-        //sleep(1000);
 
         onView(withText("Carro")).check(matches(isDisplayed()));
+    }
+
+
+    @Test
+    public void deve_AparecerDoisLeiloes_QuandoCarregarDoisLeiloesDaApi() throws IOException {
+        final TesteWebClient webClient = new TesteWebClient();
+
+        final Boolean bancoDeDadosNaoFoiLimpo = !webClient.limpaBancoDeDados();
+        if (bancoDeDadosNaoFoiLimpo) {
+            fail("Banco de dados não foi limpo");
+        }
+
+        final Leilao carroLeilao = webClient.salva(new Leilao("Carro"));
+        final Leilao computadorLeilao = webClient.salva(new Leilao("Computador"));
+        if (carroLeilao == null || computadorLeilao == null) {
+            fail("Leilão não foi salvo");
+        }
+
+        activityTestRule.launchActivity(new Intent());
+
+        onView(withText("Carro")).check(matches(isDisplayed()));
+        onView(withText("Computador")).check(matches(isDisplayed()));
     }
 }
